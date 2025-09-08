@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Admin Buses{% endblock %}
+{% block content %}
+{% include 'admin/_subnav.html' %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="mb-0">All Buses</h1>
+        <a href="{{ url_for('admin.add_bus') }}" class="btn btn-primary">Add New Bus</a>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-striped table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>ID</th>
+                    <th>Bus Number</th>
+                    <th>Model</th>
+                    <th>Capacity</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for bus in buses %}
+                <tr>
+                    <td>{{ bus.id }}</td>
+                    <td>{{ bus.bus_number }}</td>
+                    <td>{{ bus.model }}</td>
+                    <td>{{ bus.capacity }}</td>
+                </tr>
+                {% else %}
+                <tr><td colspan="4" class="text-center">No buses found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %} 

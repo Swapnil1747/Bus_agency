@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Admin Bookings{% endblock %}
+{% block content %}
+{% include 'admin/_subnav.html' %}
+<div class="container mt-4">
+    <h1>All Bookings</h1>
+    <div class="table-responsive mt-4">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>User</th>
+                    <th>Route</th>
+                    <th>Seat</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for booking in bookings %}
+                <tr>
+                    <td>{{ booking.id }}</td>
+                    <td>{{ booking.user.username }}</td>
+                    <td>{{ booking.route.origin }} to {{ booking.route.destination }}</td>
+                    <td>{{ booking.seat_number }}</td>
+                    <td>{{ booking.booking_date.strftime('%Y-%m-%d %H:%M') }}</td>
+                    <td>{{ booking.status }}</td>
+                </tr>
+                {% else %}
+                <tr><td colspan="6" class="text-center">No bookings found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %} 

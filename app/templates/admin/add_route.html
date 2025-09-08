@@ -1,0 +1,40 @@
+{% include 'admin/_subnav.html' %}
+{% extends "base.html" %}
+{% block title %}Add Route{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <h1>Add New Route</h1>
+    <form method="post">
+        <div class="mb-3">
+            <label for="origin" class="form-label">Origin</label>
+            <input type="text" class="form-control" id="origin" name="origin" required>
+        </div>
+        <div class="mb-3">
+            <label for="destination" class="form-label">Destination</label>
+            <input type="text" class="form-control" id="destination" name="destination" required>
+        </div>
+        <div class="mb-3">
+            <label for="departure_time" class="form-label">Departure Time</label>
+            <input type="datetime-local" class="form-control" id="departure_time" name="departure_time" required>
+        </div>
+        <div class="mb-3">
+            <label for="arrival_time" class="form-label">Arrival Time</label>
+            <input type="datetime-local" class="form-control" id="arrival_time" name="arrival_time" required>
+        </div>
+        <div class="mb-3">
+            <label for="price" class="form-label">Price (₹)</label>
+            <input type="number" class="form-control" id="price" name="price" min="0" step="0.01" required>
+        </div>
+        <div class="mb-3">
+            <label for="bus_id" class="form-label">Bus</label>
+            <select class="form-select" id="bus_id" name="bus_id" required>
+                <option value="">Select Bus</option>
+                {% for bus in buses %}
+                <option value="{{ bus.id }}">{{ bus.bus_number }} ({{ bus.model }})</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-success">Add Route</button>
+    </form>
+</div>
+{% endblock %} 

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Add Bus{% endblock %}
+{% block content %}
+{% include 'admin/_subnav.html' %}
+<div class="container mt-4">
+    <h1>Add New Bus</h1>
+    <form method="post">
+        <div class="mb-3">
+            <label for="bus_number" class="form-label">Bus Number</label>
+            <input type="text" class="form-control" id="bus_number" name="bus_number" required>
+        </div>
+        <div class="mb-3">
+            <label for="model" class="form-label">Model</label>
+            <input type="text" class="form-control" id="model" name="model" required>
+        </div>
+        <div class="mb-3">
+            <label for="capacity" class="form-label">Capacity</label>
+            <input type="number" class="form-control" id="capacity" name="capacity" min="1" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Add Bus</button>
+    </form>
+</div>
+{% endblock %} 

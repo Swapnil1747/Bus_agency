@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="container-fluid p-0 mb-5">
+    <div class="bg-image text-white d-flex align-items-center justify-content-center" style="background-image: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1500&q=80'); height: 400px; background-size: cover; background-position: center;">
+        <div class="text-center" style="background: rgba(0,0,0,0.5); padding: 2rem 3rem; border-radius: 1rem;">
+            <h1 class="display-4 fw-bold">Welcome to ShrijwalaBus</h1>
+            <p class="lead">Book your next journey with comfort and ease.</p>
+            <a href="{{ url_for('main.search') }}" class="btn btn-lg btn-primary mt-3">Search Buses</a>
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="container mb-5">
+    <div class="row text-center">
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <img src="https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=600&q=80" class="card-img-top" alt="Comfortable Buses">
+                <div class="card-body">
+                    <h5 class="card-title">Comfortable Buses</h5>
+                    <p class="card-text">Travel in style and comfort with our modern fleet of buses.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=600&q=80" class="card-img-top" alt="Easy Booking">
+                <div class="card-body">
+                    <h5 class="card-title">Easy Booking</h5>
+                    <p class="card-text">Book your tickets online in just a few clicks, anytime, anywhere.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <img src="https://images.unsplash.com/photo-1465447142348-e9952c393450?auto=format&fit=crop&w=600&q=80" class="card-img-top" alt="Safe Journeys">
+                <div class="card-body">
+                    <h5 class="card-title">Safe Journeys</h5>
+                    <p class="card-text">Your safety is our priority. Enjoy secure and reliable travel.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Call to Action -->
+<div class="container text-center mb-5">
+    <div class="p-4 bg-primary text-white rounded shadow">
+        <h2>Ready to travel?</h2>
+        <p class="mb-3">Find the best routes and book your seat now!</p>
+        <a href="{{ url_for('main.search') }}" class="btn btn-light btn-lg">Book Now</a>
+    </div>
+</div>
+
+<!-- Booking Success Modal -->
+<div class="modal fade" id="bookingSuccessModal" tabindex="-1" aria-labelledby="bookingSuccessLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header border-0">
+        <h5 class="modal-title" id="bookingSuccessLabel">Booking Successful!</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-center">
+        🎉 Thank you for booking with ShrijwalaBus!<br>We wish you a pleasant journey.
+      </div>
+    </div>
+  </div>
+</div>
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('booking_success') === '1' || {{ 'true' if get_flashed_messages() else 'false' }}) {
+    var modal = new bootstrap.Modal(document.getElementById('bookingSuccessModal'));
+    modal.show();
+    setTimeout(function() {
+      modal.hide();
+      // Remove booking_success from URL and refresh
+      urlParams.delete('booking_success');
+      window.location.search = urlParams.toString();
+    }, 3000);
+  }
+});
+</script>
+{% endblock %}
+{% endblock %} 

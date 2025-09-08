@@ -1,0 +1,14 @@
+<div class="dropdown ms-2 my-3">
+  <button class="btn btn-primary dropdown-toggle d-flex align-items-center gap-2" type="button" id="adminMenuDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+    <i class="bi bi-kanban"></i> Admin Menu
+  </button>
+  <ul class="dropdown-menu shadow" aria-labelledby="adminMenuDropdown">
+    <li><a class="dropdown-item d-flex align-items-center gap-2{% if request.endpoint == 'admin.dashboard' %} active{% endif %}" href="{{ url_for('admin.dashboard') }}"><i class="bi bi-speedometer2 text-primary"></i> Dashboard</a></li>
+    <li><a class="dropdown-item d-flex align-items-center gap-2{% if request.endpoint == 'admin.users' %} active{% endif %}" href="{{ url_for('admin.users') }}"><i class="bi bi-people text-success"></i> Users</a></li>
+    <li><a class="dropdown-item d-flex align-items-center gap-2{% if request.endpoint == 'admin.buses' %} active{% endif %}" href="{{ url_for('admin.buses') }}"><i class="bi bi-bus-front text-info"></i> Buses</a></li>
+    <li><a class="dropdown-item d-flex align-items-center gap-2{% if request.endpoint == 'admin.routes' %} active{% endif %}" href="{{ url_for('admin.routes') }}"><i class="bi bi-signpost text-primary"></i> Routes</a></li>
+    <li><a class="dropdown-item d-flex align-items-center gap-2{% if request.endpoint == 'admin.bookings' %} active{% endif %}" href="{{ url_for('admin.bookings') }}"><i class="bi bi-journal-check text-warning"></i> Bookings</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><a class="dropdown-item d-flex align-items-center gap-2" href="{{ url_for('main.index') }}"><i class="bi bi-house-door text-warning"></i> Back to Home</a></li>
+  </ul>
+</div> 

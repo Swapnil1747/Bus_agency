@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block title %}Book Ticket - SwiftBus{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2 class="mb-4">Book Your Ticket</h2>
+        
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Journey Details</h5>
+                <p class="card-text">
+                    <strong>Route:</strong> {{ route.origin }} → {{ route.destination }}<br>
+                    <strong>Date:</strong> {{ route.departure_time.strftime('%Y-%m-%d') }}<br>
+                    <strong>Time:</strong> {{ route.departure_time.strftime('%H:%M') }} - {{ route.arrival_time.strftime('%H:%M') }}<br>
+                    <strong>Bus:</strong> {{ route.bus.bus_number }} ({{ route.bus.model }})<br>
+                    <strong>Price:</strong> ₹{{ "%.2f"|format(route.price) }}
+                </p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Select Your Seat</h5>
+                <form action="{{ url_for('main.book', route_id=route.id) }}" method="post">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="seat-layout mb-3">
+                                <div class="driver-area mb-3">
+                                    <div class="text-center">
+                                        <i class="fas fa-steering-wheel"></i> Driver
+                                    </div>
+                                </div>
+                                <div class="seats-grid">
+                                    {% for seat in range(1, route.bus.capacity + 1) %}
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="seat_number" 
+                                                   id="seat{{ seat }}" value="{{ seat }}"
+                                                   {% if seat not in available_seats %}disabled{% endif %}>
+                                            <label class="form-check-label" for="seat{{ seat }}">
+                                                {{ seat }}
+                                            </label>
+                                        </div>
+                                        {% if seat % 4 == 0 %}
+                                            <br>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="seat-legend">
+                                <span class="me-3"><i class="fas fa-square text-success"></i> Available</span>
+                                <span class="me-3"><i class="fas fa-square text-danger"></i> Booked</span>
+                                <span><i class="fas fa-square text-primary"></i> Selected</span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="booking-summary">
+                                <h6>Booking Summary</h6>
+                                <p>
+                                    <strong>Selected Seat:</strong> <span id="selected-seat">None</span><br>
+                                    <strong>Price:</strong> ₹{{ "%.2f"|format(route.price) }}
+                                </p>
+                                <button type="submit" class="btn btn-primary w-100">Confirm Booking</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.seat-layout {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 5px;
+}
+
+.driver-area {
+    background-color: #e9ecef;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.seats-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+}
+
+.form-check-inline {
+    margin-right: 15px;
+}
+
+.seat-legend {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.booking-summary {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 5px;
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const seatInputs = document.querySelectorAll('input[name="seat_number"]');
+    const selectedSeatSpan = document.getElementById('selected-seat');
+
+    seatInputs.forEach(input => {
+        input.addEventListener('change', function() {
+            selectedSeatSpan.textContent = this.value;
+        });
+    });
+});
+</script>
+{% endblock %} 

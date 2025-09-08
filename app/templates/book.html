@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h2>Book Bus</h2>
+  <div class="mb-4 p-3 rounded" style="background: #223366; color: #f3f6fa;">
+    <h4 class="fw-bold">{{ route.bus.model }}</h4>
+    <div>Departure: {{ route.departure_time.strftime('%H:%M') }}</div>
+    <div>Available Seats: {{ route.bus.capacity - booked_seats|length }}</div>
+    <div id="totalFareDisplay" class="fw-bold" style="color: #22c55e; font-size: 1.7rem;"></div>
+  </div>
+  <button class="btn btn-success btn-lg mb-3" data-bs-toggle="modal" data-bs-target="#payModal">Pay &amp; Book Now</button>
+
+  <!-- Payment Modal -->
+  <div class="modal fade" id="payModal" tabindex="-1" aria-labelledby="payModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" style="background: #223366; color: #f3f6fa;">
+        <div class="modal-header border-0">
+          <h5 class="modal-title" id="payModalLabel">Complete Your Payment</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form method="POST" action="{{ url_for('main.confirm_booking', route_id=route.id) }}">
+          <div class="modal-body">
+            <div class="mb-3 p-3 rounded" style="background: #223366; color: #f3f6fa;">
+              <h5 class="fw-bold mb-2">{{ route.bus.model }}</h5>
+              <div>Departure: {{ route.departure_time.strftime('%H:%M') }}</div>
+              <div>Available Seats: {{ route.bus.capacity - booked_seats|length }}</div>
+              <div id="modalTotalFareDisplay" class="fw-bold" style="color: #22c55e; font-size: 1.3rem;"></div>
+            </div>
+            <div class="mb-3 text-center">
+              <div class="mb-2">Pay via UPI ID:</div>
+              <div class="fw-bold fs-5 mb-2" style="letter-spacing: 1px;">7024560895@axl</div>
+              <img src="{{ url_for('static', filename='img/upi_qr.png') }}" alt="UPI QR" style="width: 180px; border-radius: 12px; background: #fff; padding: 8px;">
+              <div class="form-text text-light mt-2">Scan QR with any UPI app</div>
+            </div>
+            <div class="mb-3">
+              <label for="upiRef" class="form-label">UPI Transaction/Reference ID <span class="text-secondary">(optional)</span></label>
+              <input type="text" class="form-control" id="upiRef" name="upi_ref" placeholder="Enter UPI transaction/reference number">
+            </div>
+            <div class="mb-3">
+              <label for="num_persons" class="form-label">Number of Persons</label>
+              <input type="number" class="form-control" id="num_persons" name="num_persons" min="1" max="{{ route.bus.capacity - booked_seats|length }}" value="1" required>
+            </div>
+            <div class="mb-3" id="seats-container">
+              <!-- Dynamic seat selectors will be inserted here -->
+            </div>
+          </div>
+          <div class="modal-footer border-0">
+            <button type="submit" class="btn btn-primary w-100">Confirm Booking</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div id="greetingMsg" class="alert alert-success text-center mt-4 d-none">
+    🎉 Thank you for booking with ShrijwalaBus! We wish you a pleasant journey.
+  </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const bookedSeats = {{ booked_seats|tojson }};
+const busCapacity = {{ route.bus.capacity }};
+const farePerPerson = {{ route.price }};
+
+function renderSeatSelectors(num) {
+  const container = document.getElementById('seats-container');
+  container.innerHTML = '';
+  for (let i = 0; i < num; i++) {
+    const label = document.createElement('label');
+    label.textContent = `Select Seat for Person ${i+1}`;
+    label.className = 'form-label';
+    const select = document.createElement('select');
+    select.className = 'form-control mb-2';
+    select.name = 'seat_numbers';
+    select.required = true;
+    for (let seat = 1; seat <= busCapacity; seat++) {
+      const option = document.createElement('option');
+      option.value = seat;
+      option.textContent = `Seat ${seat}` + (bookedSeats.includes(seat) ? ' (Booked)' : '');
+      if (bookedSeats.includes(seat)) option.disabled = true;
+      select.appendChild(option);
+    }
+    container.appendChild(label);
+    container.appendChild(select);
+  }
+}
+
+function updateTotalFare() {
+  const num = parseInt(document.getElementById('num_persons').value) || 1;
+  document.getElementById('totalFareDisplay').textContent =
+    `Total Fare for ${num} person${num > 1 ? 's' : ''}: ₹${(farePerPerson * num).toFixed(2)}`;
+}
+
+function updateModalTotalFare() {
+  const num = parseInt(document.getElementById('num_persons').value) || 1;
+  document.getElementById('modalTotalFareDisplay').textContent =
+    `Total for ${num} passenger${num > 1 ? 's' : ''}: ₹${(farePerPerson * num).toFixed(2)}`;
+}
+
+document.getElementById('num_persons').addEventListener('input', function() {
+  renderSeatSelectors(this.value);
+  updateTotalFare();
+  updateModalTotalFare();
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+  renderSeatSelectors(document.getElementById('num_persons').value);
+  updateTotalFare();
+  updateModalTotalFare();
+});
+
+document.querySelector('#payModal form').addEventListener('submit', function(e) {
+  // Validate unique seat selection
+  const selects = document.querySelectorAll('#seats-container select');
+  const values = Array.from(selects).map(s => s.value);
+  const unique = new Set(values);
+  if (unique.size !== values.length) {
+    alert('Please select a unique seat for each person.');
+    e.preventDefault();
+    return false;
+  }
+});
+</script>
+{% endblock %} 
